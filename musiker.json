@@ -1,0 +1,16 @@
+[
+  {
+    "name": "destiny",
+    "lastname": "john",
+    "instrument": "guitar",
+    "födelseår": "2004",
+    "checkedIn": true
+  },
+  {
+    "name": "tito",
+    "lastname": "mamadou",
+    "instrument": "piano",
+    "födelseår": "2005",
+    "checkedIn": false
+  }
+]
