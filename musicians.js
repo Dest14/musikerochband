@@ -1,72 +1,79 @@
 import fs from "fs";
-import Musiker from "./musician.js";
+import Band from "./bands.js"
 
 export default class MusikerLista {
-  #lista = [];
-
+  lista = [];
   constructor() {
-    this.#fetchMusikerData();
+    this.fetchMusikerData();
+    this.band = new Band();
   }
 
-  get lista() {
-    return this.#lista;
-  }
-
-
-  #fetchMusikerData() {
+  fetchMusikerData() {
     const jsonString = fs.readFileSync("musiker.json");
     const data = JSON.parse(jsonString);
 
 
     for (let i = 0; i < data.length; i++) {
-      this.#lista.push(new Musiker(data[i].name, data[i].lastname, data[i].instrument, data[i].födelseår, data[i].nuverandeband, data[i].gammalband, data[i].info));
+      this.lista.push(data[i]);
     }
   }
 
-
-  skrivUtMusiker() {
-    for (let i = 0; i < this.#lista.length; i++) {
-      console.log(`${i + 1}. ${this.#lista[i].name} ${this.#lista[i].lastname} ${this.#lista[i].instrument} ${this.#lista[i].födelseår} ${this.#lista[i].nuverandeband}`);
-    }
+  MusikerLista(name, age, info) {
+    const newMusiker = new NewMusiker(name, age, info);
+    this.lista.push(newMusiker.dataInfo())
+    this.writeToJson()
   }
 
-
-  skrivUtMusikerMedCheckIn() {
-    for (let i = 0; i < this.#lista.length; i++) {
-      console.log(`${i + 1}. ${this.#lista[i].name} ${this.#lista[i].lastname} ${this.#lista[i].instrument} ${this.#lista[i].födelseår} ${this.#lista[i].nuverandeband} ${this.#lista[i].gammalband} ${this.#lista[i].checkedIn} = ${this.#lista[i].checkedIn}`);
-    }
-  }
-
-
-  addMusikerToList(name, lastname, instrument, födelseår, nuverandeband, gammalband, info) {
-    this.#lista.push(new Musiker(name, lastname, instrument, födelseår, nuverandeband, gammalband, info));
-    this.#updateJsonFile();
-  }
-
-  removeMusikerFromList(index) {
-    this.#lista.splice(index, 1);
-    this.#updateJsonFile();
-  }
-
-  #updateJsonFile() {
-    let tempList = [];
-
-    for (let i = 0; i < this.#lista.length; i++) {
-      tempList.push(this.#lista[i].dataInfo());
-    }
-
-    fs.writeFileSync('./musiker.json', JSON.stringify(tempList, null, 2), (err) => {
+  writeToJson() {
+    fs.writeFileSync('./musiker.json', JSON.stringify(this.lista, null, 2), (err) => {
       if (err) throw err;
-      console.log('Data written to file');
-    });
+      console.log("Data saved");
+    })
   }
 
-  checkInMusiker(index) {
-    this.#lista[index].checkInAndOut();
-    this.#updateJsonFile();
+  visaAllaMusiker() {
+    for (let i = 0; i < this.lista.length; i++) {
+      console.log(`${i}. ${this.lista[i].name}`);
+    }
   }
 
-  getLength() {
-    return this.#lista.length;
+  skapaEttNyttBand(choice, instrument, bandName, bandFounded) {
+    const tempID = this.band.skapaEttNyttBand(bandName, bandFounded, this.lista[choice].musikerID, this.lista[choice].name, instrument);
+    this.editMusikerLista(choice, instrument, tempID, bandName, bandFounded);
+    this.band.writeToJson();
+    this.writeToJson();
   }
-} 
+  editMusikerLista(index, instrument, bandID, bandName, founded) {
+    if (!this.lista[index].instrument.includes(instrument)) {
+      this.lista[index].instrument.push(instrument);
+    }
+    this.lista[index].currentBand.push({ bandID: bandID, bandName: bandName, founded: founded });
+  }
+
+  addMTB(musikerIndex, instrument, bandID, bandName) {
+    this.editMusikerLista(musikerIndex, instrument, bandID, bandName, new Date().getFullYear());
+    this.band.editBand()
+  }
+}
+
+
+
+class NewMusiker {
+  constructor(name, age, info) {
+    this.name = name
+    this.age = age
+    this.info = info
+  }
+  dataInfo() {
+    return {
+      musikerID: 'id' + new Date().getTime(),
+      name: this.name,
+      age: this.age,
+      info: this.info,
+      currentBand: [],
+      previousBand: [],
+      instrument: [],
+    };
+  }
+}
+

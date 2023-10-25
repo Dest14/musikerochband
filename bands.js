@@ -1,72 +1,77 @@
 import fs from "fs";
-import Bander from "./band.js";
-
-export default class BandLista {
-  #listan = [];
-
+export default class Band {
+  bandLista = [];
   constructor() {
-    this.#fetchBanderData();
+    this.fetchData();
+    this.newband = new NewBand();
   }
 
-  get listan() {
-    return this.#listan;
-  }
-
-
-  #fetchBanderData() {
+  fetchData() {
     const jsonString = fs.readFileSync("band.json");
     const data = JSON.parse(jsonString);
 
 
     for (let i = 0; i < data.length; i++) {
-      this.#listan.push(new Bander(data[i].name, data[i].about, data[i].funded, data[i].concluded));
+      this.bandLista.push(data[i]);
     }
   }
 
+  skapaEttNyttBand(bandName, bandFounded, musikerID, musikerNamn, instrument) {
+    const newBand = new NewBand(bandName, bandFounded, musikerID, musikerNamn, instrument);
+    this.bandLista.push(newBand.dataInfo())
+    return newBand.dataInfo().bandID;
+  }
 
-  skrivUtBander() {
-    for (let i = 0; i < this.#listan.length; i++) {
-      console.log(`${i + 1}. ${this.#listan[i].name} ${this.#listan[i].about}`);
+  ongoingBand() {
+    const temp = [];
+    for (let i = 0; i < this.bandLista.lenght; i++) {
+      if (this.bandLista[i].ended === null) {
+        temp.push({ bandID: this.bandLista[i].bandID, bandName: this.bandLista[i].bandName })
+      }
+    }
+    return temp;
+  }
+
+
+  displayOngoingBand() {
+    const temp = this.ongoingBand();
+    if (temp.length === 0) {
+      for (let i = 0; i < temp.length; i++) {
+        console.log(`${i}. ${temp[i].bandName}`);
+      }
+      return temp;
     }
   }
 
-
-  skrivUtBanderMedCheckIn() {
-    for (let i = 0; i < this.#listan.length; i++) {
-      console.log(`${i + 1}. ${this.#listan[i].name} -> ${this.#listan[i].checkedIn}`);
-    }
-  }
-
-
-  addBanderToList(name, about, funded, concluded) {
-    this.#listan.push(new Bander(name, about, funded, concluded));
-    this.#updateJsonFile();
-  }
-
-  removeBanderFromList(index) {
-    this.#listan.splice(index, 1);
-    this.#updateJsonFile();
-  }
-
-  #updateJsonFile() {
-    let tempList = [];
-
-    for (let i = 0; i < this.#listan.length; i++) {
-      tempList.push(this.#listan[i].dataInfo());
-    }
-
-    fs.writeFileSync('./band.json', JSON.stringify(tempList, null, 2), (err) => {
+  writeToJson() {
+    fs.writeFileSync('./band.json', JSON.stringify(this.bandLista, null, 2), (err) => {
       if (err) throw err;
-      console.log('Data written to file');
-    });
+      console.log("Data saved");
+    })
+  }
+}
+
+
+
+class NewBand {
+  constructor(bandName, bandFounded, musikerID, musikerNamn, instrument) {
+    this.name = bandName;
+    this.age = bandFounded;
+    this.musikerID = musikerID;
+    this.musikerNamn = musikerNamn
+    this.instrument = instrument
   }
 
-  checkInBander(index) {
-    this.#listan[index].checkInAndOut();
-    this.#updateJsonFile();
+  dataInfo() {
+    return {
+      bandID: 'id' + new Date().getTime(),
+      name: this.name,
+      age: this.age,
+      currentBand: [{ memberID: this.musikerID, memberName: this.musikerNamn, instrument: this.instrument, joined: this.age }],
+      previousBand: [],
+      instrument: [],
+      ended: null
+    };
   }
+}
 
-  getLength() {
-    return this.#listan.length;
-  }
-} 

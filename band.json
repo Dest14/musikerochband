@@ -1,13 +1,17 @@
 [
   {
-    "about": "vi vet inte",
-    "funded": "2009",
-    "concluded": "2017"
-  },
-  {
-    "bandname": "LOKOLO",
-    "about": "grundades igr lol",
-    "funded": "2023",
-    "concluded": "2025"
+    "bandID": "id1698238257664",
+    "name": "soefowbfw",
+    "age": "1000",
+    "currentBand": [
+      {
+        "memberID": "id1698238064026",
+        "memberName": "asd",
+        "instrument": "iehfwof",
+        "joined": "1000"
+      }
+    ],
+    "previousBand": [],
+    "instrument": []
   }
 ]

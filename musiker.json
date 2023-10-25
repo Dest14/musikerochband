@@ -1,16 +1,19 @@
 [
   {
-    "name": "destiny",
-    "lastname": "john",
-    "instrument": "guitar",
-    "födelseår": "2004",
-    "checkedIn": true
-  },
-  {
-    "name": "tito",
-    "lastname": "mamadou",
-    "instrument": "piano",
-    "födelseår": "2005",
-    "checkedIn": false
+    "musikerID": "id1698238064026",
+    "name": "asd",
+    "age": "19",
+    "info": "sdffsegw",
+    "currentBand": [
+      {
+        "bandID": "id1698238257664",
+        "bandName": "soefowbfw",
+        "founded": "1000"
+      }
+    ],
+    "previousBand": [],
+    "instrument": [
+      "iehfwof"
+    ]
   }
 ]
